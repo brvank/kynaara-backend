@@ -2,10 +2,16 @@ package com.retail.kynaara.controller;
 
 import com.retail.kynaara.model.User;
 import com.retail.kynaara.repository.UserRepository;
+import com.retail.kynaara.service.UserService;
+import com.retail.kynaara.utility.AppResponse;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -13,20 +19,20 @@ import java.util.Map;
 @ResponseBody
 public class UserController {
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
-    @PostMapping("/add-user")
-    public String addUser(@RequestBody Map<String, Object> map){
-        try{
-            userRepository.save(new User((String) map.get("name"), (String) map.get("username"), (String) map.get("email"), (String) map.get("password"),(int) map.get("level")));
-            return "Saved";
-        }catch (Exception e){
-            return e.toString();
-        }
+    @PostMapping("/add")
+    public ResponseEntity<Object> addUser(@RequestBody Map<String, Object> map){
+        return userService.addUser(map);
     }
 
-    @GetMapping("/all-users")
-    public Iterable<User> getAllUsers(){
-        return userRepository.findAll();
+    @GetMapping("/all")
+    public ResponseEntity<Object> getAllUsers(){
+        return null;
     }
+
+//    @DeleteMapping("/delete/{id}")
+//    public ResponseEntity<Object> deleteAllUsers(Request){
+//
+//    }
 }

@@ -24,7 +24,13 @@ public class User {
         this.userLevel = userLevel;
     }
 
-    public User(){}
+    public User(){
+        this.name = "";
+        this.userName = "";
+        this.email = "";
+        this.password = "";
+        this.userLevel = 0;
+    }
 
     public String getName() {
         return name;
