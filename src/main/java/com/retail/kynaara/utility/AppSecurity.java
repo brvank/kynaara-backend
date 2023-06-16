@@ -1,5 +1,7 @@
 package com.retail.kynaara.utility;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -11,7 +13,9 @@ import java.security.spec.KeySpec;
 import java.util.Base64;
 
 public class AppSecurity {
+    @Value("${secret_key}")
     private static final String SECRET_KEY = "Bg7ycxFDdv5QovWhcDzFj";
+    @Value("${salt}")
     private static final String SALT = "dXT82rXvt8G4OFCqHA4m3";
 
     private final static int GCM_TAG_LENGTH = 16;
