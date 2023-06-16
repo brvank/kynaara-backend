@@ -1,6 +1,7 @@
 package com.retail.kynaara.utility;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -12,15 +13,16 @@ import java.nio.charset.StandardCharsets;
 import java.security.spec.KeySpec;
 import java.util.Base64;
 
+@Component
 public class AppSecurity {
     @Value("${secret_key}")
-    private static final String SECRET_KEY = "Bg7ycxFDdv5QovWhcDzFj";
+    private String SECRET_KEY;
     @Value("${salt}")
-    private static final String SALT = "dXT82rXvt8G4OFCqHA4m3";
+    private String SALT;
 
     private final static int GCM_TAG_LENGTH = 16;
 
-    public static String encrypt(String strToEncrypt){
+    public String encrypt(String strToEncrypt){
         try{
             byte[] iv = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
             GCMParameterSpec ivSpec = new GCMParameterSpec(GCM_TAG_LENGTH * Byte.SIZE, iv);
@@ -42,7 +44,7 @@ public class AppSecurity {
         return null;
     }
 
-    public static String decrypt(String strToDecrypt){
+    public String decrypt(String strToDecrypt){
         try{
             byte[] iv = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
             GCMParameterSpec ivSpec = new GCMParameterSpec(GCM_TAG_LENGTH * Byte.SIZE, iv);

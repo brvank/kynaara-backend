@@ -2,10 +2,14 @@ package com.retail.kynaara.utility;
 
 import com.retail.kynaara.model.User;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TokenUtil {
+
+    @Autowired
+    AppSecurity appSecurity;
 
     private static final String USER_NAME = "user_name";
     private static final String USER_LEVEL = "user_level";
@@ -18,18 +22,18 @@ public class TokenUtil {
         EXPIRED
     }
 
-    public static String generateToken(User user){
+    public String generateToken(User user){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(USER_NAME, user.getUserName());
         jsonObject.put(USER_LEVEL, user.getUserLevel());
         jsonObject.put(VALIDITY, System.currentTimeMillis() + 10000);
 
-        return AppSecurity.encrypt(jsonObject.toString());
+        return appSecurity.encrypt(jsonObject.toString());
     }
 
-    public static User extractToken(String token){
+    public User extractToken(String token){
         try{
-            JSONObject jsonObject = new JSONObject(AppSecurity.decrypt(token));
+            JSONObject jsonObject = new JSONObject(appSecurity.decrypt(token));
             User user = new User();
             user.setUserName(jsonObject.getString(USER_NAME));
             user.setUserLevel(jsonObject.getInt(USER_LEVEL));
@@ -40,8 +44,8 @@ public class TokenUtil {
         }
     }
 
-    public static TokenValidity validateToken(String token){
-        String decryptedToken = AppSecurity.decrypt(token);
+    public TokenValidity validateToken(String token){
+        String decryptedToken = appSecurity.decrypt(token);
 
         if(decryptedToken == null){
             return TokenValidity.INVALID;

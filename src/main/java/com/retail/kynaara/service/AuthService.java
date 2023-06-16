@@ -20,6 +20,9 @@ public class AuthService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    TokenUtil tokenUtil;
+
     public static final String TOKEN = "token";
 
     public ResponseEntity<Object> login(Map<String, String> requestMap){
@@ -35,7 +38,7 @@ public class AuthService {
                 }
             });
 
-            String token = TokenUtil.generateToken(users.get(0));
+            String token = tokenUtil.generateToken(users.get(0));
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(TOKEN, token);
             return AppResponse.successResponse(jsonObject, AppMessages.Success.loggedIn);
