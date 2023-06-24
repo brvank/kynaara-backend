@@ -1,9 +1,12 @@
 package com.retail.kynaara.service;
 
 import com.retail.kynaara.model.User;
+import com.retail.kynaara.repository.UserCustomRepository;
 import com.retail.kynaara.repository.UserRepository;
+import com.retail.kynaara.response_model.AuthResponse;
 import com.retail.kynaara.utility.AppMessages;
 import com.retail.kynaara.utility.AppResponse;
+import com.retail.kynaara.utility.AppUtil;
 import com.retail.kynaara.utility.TokenUtil;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -18,32 +22,41 @@ import java.util.function.Consumer;
 public class AuthService {
 
     @Autowired
-    UserRepository userRepository;
+    UserCustomRepository userCustomRepository;
+
+    @Autowired
+    AppResponse appResponse;
+    @Autowired
+    AppUtil.Constants appUtilConstants;
+    @Autowired
+    AppMessages.Success successMessages;
+    @Autowired
+    AppMessages.Error errorMessages;
 
     @Autowired
     TokenUtil tokenUtil;
 
-    public static final String TOKEN = "token";
-
     public ResponseEntity<Object> login(Map<String, String> requestMap){
-        String userName = requestMap.getOrDefault(UserService.USER_NAME, null);
-        String password = requestMap.getOrDefault(UserService.PASSWORD, null);
+        try{
+            String userName = requestMap.getOrDefault(appUtilConstants.USER_NAME, null);
+            String password = requestMap.getOrDefault(appUtilConstants.PASSWORD, null);
 
-        if(userName != null && password != null){
-            ArrayList<User> users = new ArrayList<>();
-            userRepository.findByUserName(userName).forEach(new Consumer<User>() {
-                @Override
-                public void accept(User user) {
-                    users.add(user);
+            if(userName != null && password != null){
+                List<User> users = userCustomRepository.getUserByNameAndPassword(userName, password);
+
+                if(users.size() > 0){
+                    String token = tokenUtil.generateToken(users.get(0));
+                    AuthResponse authResponse = new AuthResponse(token);
+                    return appResponse.successResponse(authResponse, successMessages.loggedIn);
+                }else{
+                    return appResponse.failureResponse(errorMessages.invalidCredentials);
                 }
-            });
-
-            String token = tokenUtil.generateToken(users.get(0));
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put(TOKEN, token);
-            return AppResponse.successResponse(jsonObject, AppMessages.Success.loggedIn);
-        }else{
-            return AppResponse.failureResponse(AppMessages.Error.provideAllFields);
+            }else{
+                return appResponse.failureResponse(errorMessages.provideAllFields);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return appResponse.failureResponse(errorMessages.errorLogging);
         }
     }
 }

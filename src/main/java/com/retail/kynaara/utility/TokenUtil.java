@@ -11,10 +11,10 @@ public class TokenUtil {
     @Autowired
     AppSecurity appSecurity;
 
-    private static final String USER_NAME = "user_name";
-    private static final String USER_LEVEL = "user_level";
-    private static final String VALIDITY = "validity";
-    private static final long EXPIRY_TIME = 24 * 60 * 60 * 1000; //one day validity
+    private final String USER_NAME = "user_name";
+    private final String USER_LEVEL = "user_level";
+    private final String VALIDITY = "validity";
+    private final long EXPIRY_TIME = 24 * 60 * 60 * 1000; //one day validity
 
     public enum TokenValidity{
         INVALID,
@@ -23,12 +23,17 @@ public class TokenUtil {
     }
 
     public String generateToken(User user){
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put(USER_NAME, user.getUserName());
-        jsonObject.put(USER_LEVEL, user.getUserLevel());
-        jsonObject.put(VALIDITY, System.currentTimeMillis() + 10000);
+        try{
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(USER_NAME, user.getUserName());
+            jsonObject.put(USER_LEVEL, user.getUserLevel());
+            jsonObject.put(VALIDITY, System.currentTimeMillis() + EXPIRY_TIME);
 
-        return appSecurity.encrypt(jsonObject.toString());
+            return appSecurity.encrypt(jsonObject.toString());
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public User extractToken(String token){
@@ -45,17 +50,22 @@ public class TokenUtil {
     }
 
     public TokenValidity validateToken(String token){
-        String decryptedToken = appSecurity.decrypt(token);
+        try{
+            String decryptedToken = appSecurity.decrypt(token);
 
-        if(decryptedToken == null){
-            return TokenValidity.INVALID;
-        }else{
-            JSONObject jsonObject = new JSONObject(decryptedToken);
-            if(jsonObject.getLong(VALIDITY) < System.currentTimeMillis()){
-                return TokenValidity.EXPIRED;
+            if(decryptedToken == null){
+                return TokenValidity.INVALID;
             }else{
-                return TokenValidity.VALID;
+                JSONObject jsonObject = new JSONObject(decryptedToken);
+                if(jsonObject.getLong(VALIDITY) < System.currentTimeMillis()){
+                    return TokenValidity.EXPIRED;
+                }else{
+                    return TokenValidity.VALID;
+                }
             }
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
         }
     }
 

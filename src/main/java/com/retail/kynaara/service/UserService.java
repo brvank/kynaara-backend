@@ -4,6 +4,7 @@ import com.retail.kynaara.model.User;
 import com.retail.kynaara.repository.UserRepository;
 import com.retail.kynaara.utility.AppMessages;
 import com.retail.kynaara.utility.AppResponse;
+import com.retail.kynaara.utility.AppUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,22 +20,31 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public static final String NAME = "name"
-            , USER_NAME = "user_name"
-            , EMAIL = "email"
-            , PASSWORD = "password"
-            , USER_LEVEL = "user_level";
+    @Autowired
+    AppMessages appMessages;
 
-    public static JSONObject userToJsonObject(User user){
+    @Autowired
+    AppUtil.Constants appUtilConstants;
+
+    @Autowired
+    AppMessages.Success success;
+
+    @Autowired
+    AppMessages.Error error;
+
+    @Autowired
+    private AppResponse appResponse;
+
+    public JSONObject userToJsonObject(User user){
         JSONObject userJsonObject = new JSONObject();
-        userJsonObject.put(NAME, user.getName());
-        userJsonObject.put(USER_NAME, user.getUserName());
-        userJsonObject.put(EMAIL, user.getEmail());
-        userJsonObject.put(USER_LEVEL, user.getUserLevel());
+        userJsonObject.put(appUtilConstants.NAME, user.getName());
+        userJsonObject.put(appUtilConstants.USER_NAME, user.getUserName());
+        userJsonObject.put(appUtilConstants.EMAIL, user.getEmail());
+        userJsonObject.put(appUtilConstants.USER_LEVEL, user.getUserLevel());
         return userJsonObject;
     }
 
-    public static JSONArray usersListToJsonArray(Iterable<User> users){
+    public JSONArray usersListToJsonArray(Iterable<User> users){
         JSONArray userJsonArray = new JSONArray();
         users.forEach(new Consumer<User>() {
             @Override
@@ -49,18 +59,18 @@ public class UserService {
         try{
             userRepository.save(
                     new User(
-                            (String) userMap.get(NAME),
-                            (String) userMap.get(USER_NAME),
-                            (String) userMap.get(EMAIL),
-                            (String) userMap.get(PASSWORD),
-                            (int) userMap.get(USER_LEVEL)
+                            (String) userMap.get(appUtilConstants.NAME),
+                            (String) userMap.get(appUtilConstants.USER_NAME),
+                            (String) userMap.get(appUtilConstants.EMAIL),
+                            (String) userMap.get(appUtilConstants.PASSWORD),
+                            (int) userMap.get(appUtilConstants.USER_LEVEL)
                     )
             );
 
-            return AppResponse.successResponse(AppMessages.Success.userAdded);
+            return appResponse.successResponse(success.userAdded);
         }catch (Exception e){
             e.printStackTrace();
-            return AppResponse.failureResponse(AppMessages.Error.userNotAdded);
+            return appResponse.failureResponse(error.userNotAdded);
         }
     }
 
@@ -68,10 +78,10 @@ public class UserService {
         try{
             JSONArray userJsonArray = usersListToJsonArray(userRepository.findAll());
 
-            return AppResponse.successResponse(userJsonArray, AppMessages.Success.userAdded);
+            return appResponse.successResponse(userJsonArray, success.userAdded);
         }catch (Exception e){
             e.printStackTrace();
-            return AppResponse.failureResponse(AppMessages.Error.userNotAdded);
+            return appResponse.failureResponse(error.userNotAdded);
         }
     }
 }

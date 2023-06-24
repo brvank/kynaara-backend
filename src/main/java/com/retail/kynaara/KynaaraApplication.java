@@ -9,7 +9,6 @@ public class KynaaraApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(KynaaraApplication.class, args);
-
 	}
 
 }

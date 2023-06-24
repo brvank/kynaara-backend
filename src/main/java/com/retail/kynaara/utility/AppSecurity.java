@@ -20,7 +20,7 @@ public class AppSecurity {
     @Value("${salt}")
     private String SALT;
 
-    private final static int GCM_TAG_LENGTH = 16;
+    private final int GCM_TAG_LENGTH = 16;
 
     public String encrypt(String strToEncrypt){
         try{
