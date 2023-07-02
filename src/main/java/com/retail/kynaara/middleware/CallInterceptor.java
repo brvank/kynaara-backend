@@ -21,10 +21,14 @@ public class CallInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if(request.getRequestURI().contains("api/v1/auth/login")){
+        System.out.println(request.getRequestURI());
+        if(request.getRequestURI().contains("api/v1/auth/login") || request.getRequestURI().contains("error")){
             return true;
         }else{
             TokenUtil.TokenValidity tokenValidity = tokenUtil.validateToken(request.getHeader("Authorization"));
+            if(tokenValidity == null){
+                return true;
+            }
             if(tokenValidity == TokenUtil.TokenValidity.VALID){
                 //TODO: check for user exists or not
                 return true;
@@ -33,7 +37,7 @@ public class CallInterceptor implements HandlerInterceptor {
 
                 Message message = new Message(errorMessages.notAuthorized, false);
                 response.setContentType("application/json");
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setStatus(401);
                 response.getWriter().write(objectMapper.writeValueAsString(message));
 
                 return false;

@@ -36,8 +36,8 @@ public class UserCustomRepository {
         CriteriaQuery<User> userCriteriaQuery = criteriaBuilder.createQuery(User.class);
 
         Root<User> userRoot = userCriteriaQuery.from(User.class);
-        Predicate predicateUserNameFilter = criteriaBuilder.like(userRoot.get("name"), username);
-        Predicate predicatePasswordFilter = criteriaBuilder.like(userRoot.get("name"), username);
+        Predicate predicateUserNameFilter = criteriaBuilder.like(userRoot.get("userName"), username);
+        Predicate predicatePasswordFilter = criteriaBuilder.like(userRoot.get("password"), password);
 
         userCriteriaQuery.where(predicateUserNameFilter, predicatePasswordFilter);
 

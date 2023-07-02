@@ -44,9 +44,12 @@ public class AuthService {
             if(userName != null && password != null){
                 List<User> users = userCustomRepository.getUserByNameAndPassword(userName, password);
 
+                System.out.println("step 1");
                 if(users.size() > 0){
                     String token = tokenUtil.generateToken(users.get(0));
                     AuthResponse authResponse = new AuthResponse(token);
+                    System.out.println("step 2");
+
                     return appResponse.successResponse(authResponse, successMessages.loggedIn);
                 }else{
                     return appResponse.failureResponse(errorMessages.invalidCredentials);
