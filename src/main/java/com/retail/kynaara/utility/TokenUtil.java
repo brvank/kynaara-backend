@@ -25,8 +25,8 @@ public class TokenUtil {
     public String generateToken(User user){
         try{
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put(USER_NAME, user.getUserName());
-            jsonObject.put(USER_LEVEL, user.getUserLevel());
+            jsonObject.put(USER_NAME, user.getUser_user_name());
+            jsonObject.put(USER_LEVEL, user.getUser_user_level());
             jsonObject.put(VALIDITY, System.currentTimeMillis() + EXPIRY_TIME);
 
             return appSecurity.encrypt(jsonObject.toString());
@@ -36,12 +36,12 @@ public class TokenUtil {
         }
     }
 
-    public User extractToken(String token){
+    public User extractUserFromToken(String token){
         try{
             JSONObject jsonObject = new JSONObject(appSecurity.decrypt(token));
             User user = new User();
-            user.setUserName(jsonObject.getString(USER_NAME));
-            user.setUserLevel(jsonObject.getInt(USER_LEVEL));
+            user.setUser_user_name(jsonObject.getString(USER_NAME));
+            user.setUser_user_level(jsonObject.getInt(USER_LEVEL));
             return user;
         }catch(Exception e){
             e.printStackTrace();

@@ -2,7 +2,6 @@ package com.retail.kynaara.service;
 
 import com.retail.kynaara.model.User;
 import com.retail.kynaara.repository.UserCustomRepository;
-import com.retail.kynaara.repository.UserRepository;
 import com.retail.kynaara.response_model.AuthResponse;
 import com.retail.kynaara.utility.AppMessages;
 import com.retail.kynaara.utility.AppResponse;
@@ -44,11 +43,9 @@ public class AuthService {
             if(userName != null && password != null){
                 List<User> users = userCustomRepository.getUserByNameAndPassword(userName, password);
 
-                System.out.println("step 1");
                 if(users.size() > 0){
                     String token = tokenUtil.generateToken(users.get(0));
                     AuthResponse authResponse = new AuthResponse(token);
-                    System.out.println("step 2");
 
                     return appResponse.successResponse(authResponse, successMessages.loggedIn);
                 }else{

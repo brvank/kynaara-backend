@@ -18,6 +18,8 @@ public class AppMessages {
                 , invalidCredentials = "Invalid login credentials!"
                 , provideAllFields = "Provide all the fields!"
                 , notAuthorized = "Authentication failed. Please re-login again"
-                , errorLogging = "Unknown error occurred while logging in!";
+                , errorLogging = "Unknown error occurred while logging in!"
+                , permissionDenied = "Permission denied. You are not allowed to perform this task!"
+                , userDoesNotExist = "User doesn't exist!";
     }
 }

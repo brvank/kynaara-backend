@@ -1,24 +1,25 @@
 package com.retail.kynaara.service;
 
 import com.retail.kynaara.model.User;
-import com.retail.kynaara.repository.UserRepository;
+import com.retail.kynaara.repository.UserCustomRepository;
 import com.retail.kynaara.utility.AppMessages;
 import com.retail.kynaara.utility.AppResponse;
 import com.retail.kynaara.utility.AppUtil;
+import com.retail.kynaara.utility.UserPermissionsManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.function.Consumer;
 
 @Service
 public class UserService {
-
     @Autowired
-    private UserRepository userRepository;
+    UserCustomRepository userCustomRepository;
 
     @Autowired
     AppMessages appMessages;
@@ -35,37 +36,34 @@ public class UserService {
     @Autowired
     private AppResponse appResponse;
 
-    public JSONObject userToJsonObject(User user){
-        JSONObject userJsonObject = new JSONObject();
-        userJsonObject.put(appUtilConstants.NAME, user.getName());
-        userJsonObject.put(appUtilConstants.USER_NAME, user.getUserName());
-        userJsonObject.put(appUtilConstants.EMAIL, user.getEmail());
-        userJsonObject.put(appUtilConstants.USER_LEVEL, user.getUserLevel());
-        return userJsonObject;
-    }
+    @Autowired
+    private UserPermissionsManager userPermissionsManager;
 
-    public JSONArray usersListToJsonArray(Iterable<User> users){
-        JSONArray userJsonArray = new JSONArray();
-        users.forEach(new Consumer<User>() {
-            @Override
-            public void accept(User user) {
-                userJsonArray.put(userToJsonObject(user));
-            }
-        });
-        return userJsonArray;
-    }
-
-    public ResponseEntity<Object> addUser(Map<String, Object> userMap){
+    public ResponseEntity<Object> addUser(Map<String, Object> userMap, User user){
+        if(user == null){
+            return appResponse.failureResponse(error.permissionDenied);
+        }
         try{
-            userRepository.save(
-                    new User(
-                            (String) userMap.get(appUtilConstants.NAME),
-                            (String) userMap.get(appUtilConstants.USER_NAME),
-                            (String) userMap.get(appUtilConstants.EMAIL),
-                            (String) userMap.get(appUtilConstants.PASSWORD),
-                            (int) userMap.get(appUtilConstants.USER_LEVEL)
-                    )
+            ArrayList<User> users = new ArrayList<>();
+            User userToAdd = new User(
+                    (String) userMap.get(appUtilConstants.NAME),
+                    (String) userMap.get(appUtilConstants.USER_NAME),
+                    (String) userMap.get(appUtilConstants.EMAIL),
+                    (String) userMap.get(appUtilConstants.PASSWORD),
+                    (int) userMap.get(appUtilConstants.USER_LEVEL)
             );
+
+            if(user.getUser_user_level() >= userToAdd.getUser_user_level()){
+                if(user.getUser_user_level() > userToAdd.getUser_user_level()){
+                    return appResponse.failureResponse(error.permissionDenied);
+                }else if((user.getUser_user_level() != 1) && (user.getUser_user_level() == userToAdd.getUser_user_level())){
+                    return appResponse.failureResponse(error.permissionDenied);
+                }
+            }
+
+            users.add(userToAdd);
+
+            userCustomRepository.addMultipleUsers(users);
 
             return appResponse.successResponse(success.userAdded);
         }catch (Exception e){
@@ -74,14 +72,15 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<Object> getAllUsers(){
-        try{
-            JSONArray userJsonArray = usersListToJsonArray(userRepository.findAll());
+    public ResponseEntity<Object> getUsers(int start, int size){
+        return appResponse.successResponse(userCustomRepository.getUsers(start, size), null);
+    }
 
-            return appResponse.successResponse(userJsonArray, success.userAdded);
-        }catch (Exception e){
-            e.printStackTrace();
-            return appResponse.failureResponse(error.userNotAdded);
-        }
+    public ResponseEntity<Object> getUsersByFullName(int start, int size, String q){
+        return appResponse.successResponse(userCustomRepository.getUsersByFullName(start, size, q), null);
+    }
+
+    public ResponseEntity<Object> getUsersByUserName(int start, int size, String q){
+        return appResponse.successResponse(userCustomRepository.getUsersByUserName(start, size, q), null);
     }
 }

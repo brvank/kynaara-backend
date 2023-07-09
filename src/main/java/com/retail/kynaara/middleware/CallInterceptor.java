@@ -26,9 +26,7 @@ public class CallInterceptor implements HandlerInterceptor {
             return true;
         }else{
             TokenUtil.TokenValidity tokenValidity = tokenUtil.validateToken(request.getHeader("Authorization"));
-            if(tokenValidity == null){
-                return true;
-            }
+
             if(tokenValidity == TokenUtil.TokenValidity.VALID){
                 //TODO: check for user exists or not
                 return true;

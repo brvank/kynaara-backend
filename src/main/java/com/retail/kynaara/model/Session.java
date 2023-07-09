@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Id;
 
+@Deprecated(since = "Not in use presently")
 @Entity
 public class Session {
 

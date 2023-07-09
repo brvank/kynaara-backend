@@ -1,34 +1,39 @@
 package com.retail.kynaara.controller;
 
-import com.retail.kynaara.model.User;
-import com.retail.kynaara.repository.UserRepository;
 import com.retail.kynaara.service.UserService;
-import com.retail.kynaara.utility.AppResponse;
-import org.json.JSONObject;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/api/v1/user")
 @ResponseBody
-public class UserController {
+public class UserController extends ParentController{
     @Autowired
     private UserService userService;
 
     @PostMapping("/add")
-    public ResponseEntity<Object> addUser(@RequestBody Map<String, Object> map){
-        return userService.addUser(map);
+    public ResponseEntity<Object> addUser(@RequestBody Map<String, Object> userMap, HttpServletRequest header){
+        return userService.addUser(userMap, headerToUser(header));
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<Object> getAllUsers(){
-        return null;
+    @GetMapping("/get")
+    public ResponseEntity<Object> getUsers(@RequestParam int start, @RequestParam int size){
+        return userService.getUsers(start, size);
+    }
+
+    @GetMapping("/get/byFullName")
+    public ResponseEntity<Object> getUsersByFullName(@RequestParam int start, @RequestParam int size, @RequestParam String q){
+        return userService.getUsersByFullName(start, size, q);
+    }
+
+    @GetMapping("/get/byUserName")
+    public ResponseEntity<Object> getUsersByUserName(@RequestParam int start, @RequestParam int size, @RequestParam String q){
+        return userService.getUsersByUserName(start, size, q);
     }
 
 //    @DeleteMapping("/delete/{id}")
