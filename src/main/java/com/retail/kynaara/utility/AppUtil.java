@@ -7,11 +7,12 @@ public class AppUtil {
 
     @Component
     public class Constants{
-        public final String NAME = "name"
+        public final String USER_FULL_NAME = "full_name"
                 , USER_NAME = "user_name"
-                , EMAIL = "email"
-                , PASSWORD = "password"
-                , USER_LEVEL = "user_level";
+                , USER_EMAIL = "email"
+                , USER_PASSWORD = "password"
+                , USER_LEVEL = "user_level"
+                , USER_ID = "user_id";
 
         public final String SUCCESS = "success"
                 , STATUS_CODE = "statusCode"

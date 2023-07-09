@@ -22,22 +22,32 @@ public class UserController extends ParentController{
     }
 
     @GetMapping("/get")
-    public ResponseEntity<Object> getUsers(@RequestParam int start, @RequestParam int size){
-        return userService.getUsers(start, size);
+    public ResponseEntity<Object> getUsers(@RequestParam int start, @RequestParam int size, HttpServletRequest header){
+        return userService.getUsers(start, size, headerToUser(header));
+    }
+
+    @GetMapping("/get/{id}")
+    public ResponseEntity<Object> getUsers(@PathVariable(value = "id") int userId, HttpServletRequest header){
+        return userService.getUsersByUserId(userId, headerToUser(header));
     }
 
     @GetMapping("/get/byFullName")
-    public ResponseEntity<Object> getUsersByFullName(@RequestParam int start, @RequestParam int size, @RequestParam String q){
-        return userService.getUsersByFullName(start, size, q);
+    public ResponseEntity<Object> getUsersByFullName(@RequestParam int start, @RequestParam int size, @RequestParam String q, HttpServletRequest header){
+        return userService.getUsersByFullName(start, size, q, headerToUser(header));
     }
 
     @GetMapping("/get/byUserName")
-    public ResponseEntity<Object> getUsersByUserName(@RequestParam int start, @RequestParam int size, @RequestParam String q){
-        return userService.getUsersByUserName(start, size, q);
+    public ResponseEntity<Object> getUsersByUserName(@RequestParam int start, @RequestParam int size, @RequestParam String q, HttpServletRequest header){
+        return userService.getUsersByUserName(start, size, q, headerToUser(header));
     }
 
-//    @DeleteMapping("/delete/{id}")
-//    public ResponseEntity<Object> deleteAllUsers(Request){
-//
-//    }
+    @PutMapping("/update")
+    public ResponseEntity<Object> updateUser(@RequestBody Map<String, Object> userMap, HttpServletRequest header){
+        return userService.updateUser(userMap, headerToUser(header));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Object> deleteUser(@PathVariable(value = "id") int userId, HttpServletRequest header){
+        return userService.deleteUser(userId, headerToUser(header));
+    }
 }

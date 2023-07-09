@@ -7,15 +7,12 @@ import com.retail.kynaara.utility.AppMessages;
 import com.retail.kynaara.utility.AppResponse;
 import com.retail.kynaara.utility.AppUtil;
 import com.retail.kynaara.utility.TokenUtil;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 @Service
 public class AuthService {
@@ -38,7 +35,7 @@ public class AuthService {
     public ResponseEntity<Object> login(Map<String, String> requestMap){
         try{
             String userName = requestMap.getOrDefault(appUtilConstants.USER_NAME, null);
-            String password = requestMap.getOrDefault(appUtilConstants.PASSWORD, null);
+            String password = requestMap.getOrDefault(appUtilConstants.USER_PASSWORD, null);
 
             if(userName != null && password != null){
                 List<User> users = userCustomRepository.getUserByNameAndPassword(userName, password);
