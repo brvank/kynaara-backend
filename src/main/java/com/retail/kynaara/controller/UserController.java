@@ -28,7 +28,7 @@ public class UserController extends ParentController{
 
     @GetMapping("/get/{id}")
     public ResponseEntity<Object> getUsers(@PathVariable(value = "id") int userId, HttpServletRequest header){
-        return userService.getUsersByUserId(userId, headerToUser(header));
+        return userService.getUserByUserId(userId, headerToUser(header));
     }
 
     @GetMapping("/get/byFullName")

@@ -19,28 +19,6 @@ public class UserCustomRepository {
     @Autowired
     UserRepository userRepository;
 
-    public List<User> getUserByNameAndPassword(String username, String password){
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-
-        CriteriaQuery<User> userCriteriaQuery = criteriaBuilder.createQuery(User.class);
-
-        Root<User> userRoot = userCriteriaQuery.from(User.class);
-        Predicate predicateUserNameFilter = criteriaBuilder.like(userRoot.get("user_user_name"), username);
-        Predicate predicatePasswordFilter = criteriaBuilder.like(userRoot.get("user_password"), password);
-
-        userCriteriaQuery.where(predicateUserNameFilter, predicatePasswordFilter);
-
-        return entityManager.createQuery(userCriteriaQuery).getResultList();
-    }
-
-    //four basic operations
-    // CRUD -> create, read, update, delete
-    // create -> add user
-    // read -> get user
-    // update -> edit user
-    // delete -> remove user
-
-
     //create operations
     public void addUser(User user){
         userRepository.save(user);
@@ -80,11 +58,11 @@ public class UserCustomRepository {
 
         Root<User> userRoot = userCriteriaQuery.from(User.class);
 
-        Predicate predicateUserLevel = criteriaBuilder.equal(userRoot.get("user_id"), userId);
+        Predicate predicateUserId = criteriaBuilder.equal(userRoot.get("user_id"), userId);
 
         userCriteriaQuery.select(userRoot);
 
-        userCriteriaQuery.where(predicateUserLevel);
+        userCriteriaQuery.where(predicateUserId);
 
         return entityManager.createQuery(userCriteriaQuery).getResultList();
     }
@@ -133,6 +111,20 @@ public class UserCustomRepository {
         userCriteriaQuery.where(predicateUserFullName, predicateUserLevel);
 
         return entityManager.createQuery(userCriteriaQuery).setFirstResult(start).setMaxResults(size).getResultList();
+    }
+
+    public List<User> getUserByNameAndPassword(String username, String password){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<User> userCriteriaQuery = criteriaBuilder.createQuery(User.class);
+
+        Root<User> userRoot = userCriteriaQuery.from(User.class);
+        Predicate predicateUserNameFilter = criteriaBuilder.like(userRoot.get("user_user_name"), username);
+        Predicate predicatePasswordFilter = criteriaBuilder.like(userRoot.get("user_password"), password);
+
+        userCriteriaQuery.where(predicateUserNameFilter, predicatePasswordFilter);
+
+        return entityManager.createQuery(userCriteriaQuery).getResultList();
     }
 
     //update operations

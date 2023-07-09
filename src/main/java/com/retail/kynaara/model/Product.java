@@ -12,7 +12,6 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int product_id;
-
     private String product_link;
     private String product_image_link;
     @Nullable
@@ -38,6 +37,14 @@ public class Product {
         this.product_creator_id = 0;
         this.product_date_created = null;
         this.product_date_assigned = null;
+    }
+
+    public int getProduct_id() {
+        return product_id;
+    }
+
+    public void setProduct_id(int product_id) {
+        this.product_id = product_id;
     }
 
     public String getProduct_link() {

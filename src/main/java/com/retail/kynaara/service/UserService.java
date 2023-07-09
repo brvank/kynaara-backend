@@ -20,9 +20,6 @@ public class UserService {
     UserCustomRepository userCustomRepository;
 
     @Autowired
-    AppMessages appMessages;
-
-    @Autowired
     AppUtil.Constants appUtilConstants;
 
     @Autowired
@@ -84,16 +81,16 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<Object> getUsersByUserId(int userId, User user){
+    public ResponseEntity<Object> getUserByUserId(int userId, User user){
         if(user == null){
             return appResponse.failureResponse(error.permissionDenied);
         }
         try{
             List<User> userList = userCustomRepository.getUserByUserId(userId);
             if(userList.isEmpty()){
-                return appResponse.successResponse(userList, error.userDoesNotExist);
+                return appResponse.failureResponse(error.userDoesNotExist);
             }else{
-                return appResponse.successResponse(userList, null);
+                return appResponse.successResponse(userList.get(0), null);
             }
 
         }catch (Exception e){
@@ -139,6 +136,11 @@ public class UserService {
             userToUpdate.setUser_password((String) userMap.get(appUtilConstants.USER_PASSWORD));
             userToUpdate.setUser_full_name((String) userMap.get(appUtilConstants.USER_FULL_NAME));
 
+            List<User> userList = userCustomRepository.getUserByUserId(userToUpdate.getUser_id());
+            if(userList.isEmpty()){
+                return appResponse.failureResponse(error.userDoesNotExist);
+            }
+
             userCustomRepository.updateUser(userToUpdate);
 
             return appResponse.successResponse(success.userUpdated);
@@ -156,7 +158,7 @@ public class UserService {
         try{
             List<User> userList = userCustomRepository.getUserByUserId(userId);
             if(userList.isEmpty()){
-                return appResponse.successResponse(userList, error.userDoesNotExist);
+                return appResponse.failureResponse(error.userDoesNotExist);
             }else{
                 User userToDelete = userList.get(0);
 

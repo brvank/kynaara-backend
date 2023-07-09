@@ -12,7 +12,20 @@ public class AppUtil {
                 , USER_EMAIL = "email"
                 , USER_PASSWORD = "password"
                 , USER_LEVEL = "user_level"
-                , USER_ID = "user_id";
+                , USER_ID = "user_id"
+                , CHANNEL_NAME = "channel_name"
+                , CHANNEL_LINK = "link"
+                , CHANNEL_LOGO_LINK = "logo_link"
+                , CHANNEL_CREATION_DATE = "creation_date"
+                , CHANNEL_CREATOR_ID = "creator_id"
+                , CHANNEL_ID = "channel_id"
+                , PRODUCT_LINK = "link"
+                , PRODUCT_IMAGE_LINK = "image_link"
+                , PRODUCT_CREATION_DATE = "creation_date"
+                , PRODUCT_CREATOR_ID = "creator_id"
+                , PRODUCT_ASSIGNED_DATE = "assigned_date"
+                , PRODUCT_ASSIGNEE_ID = "assignee_id"
+                , PRODUCT_ID = "product_id";
 
         public final String SUCCESS = "success"
                 , STATUS_CODE = "statusCode"
