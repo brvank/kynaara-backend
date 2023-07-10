@@ -22,8 +22,13 @@ public class ProductController extends ParentController{
     }
 
     @GetMapping("/get")
-    public ResponseEntity<Object> getProducts(@RequestParam int start, @RequestParam int size, HttpServletRequest header){
-        return productService.getProducts(start, size, headerToUser(header));
+    public ResponseEntity<Object> getProducts(@RequestParam int start, @RequestParam int size, @RequestParam int channelId, HttpServletRequest header){
+        return productService.getProducts(start, size, channelId, headerToUser(header));
+    }
+
+    @GetMapping("/get/byAssigneeId")
+    public ResponseEntity<Object> getProductsByAssigneeId(@RequestParam int start, @RequestParam int size, @RequestParam int channelId, @RequestParam int assigneeId, HttpServletRequest header){
+        return productService.getProductsByAssigneeId(start, size, channelId, assigneeId, headerToUser(header));
     }
 
     @GetMapping("/get/{id}")
@@ -32,8 +37,13 @@ public class ProductController extends ParentController{
     }
 
     @GetMapping("/get/byLink")
-    public ResponseEntity<Object> getProductsByLink(@RequestParam int start, @RequestParam int size, @RequestParam String q, HttpServletRequest header){
-        return productService.getProductsByLink(start, size, q, headerToUser(header));
+    public ResponseEntity<Object> getProductsByLink(@RequestParam int start, @RequestParam int size, @RequestParam int channelId, @RequestParam String q, HttpServletRequest header){
+        return productService.getProductsByLink(start, size, channelId, q, headerToUser(header));
+    }
+
+    @GetMapping("/get/byLinkByAssigneeId")
+    public ResponseEntity<Object> getProductsByLinkByAssigneeId(@RequestParam int start, @RequestParam int size, @RequestParam int channelId, @RequestParam int assigneeId, @RequestParam String q, HttpServletRequest header){
+        return productService.getProductsByLinkByAssigneeId(start, size, channelId, assigneeId, q, headerToUser(header));
     }
 
     @PutMapping("/update")

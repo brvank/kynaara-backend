@@ -58,4 +58,14 @@ public class CountController extends ParentController{
     public ResponseEntity<Object> getCountProductsByLink(@RequestParam String q, HttpServletRequest header){
         return productService.getCountProductsByLink(q, headerToUser(header));
     }
+
+    @GetMapping("/productsByLinkByAssigneeId")
+    public ResponseEntity<Object> getCountProductsByLinkByAssigneeId(@RequestParam int channelId, @RequestParam int assigneeId, @RequestParam String q, HttpServletRequest header){
+        return productService.getCountProductsByLinkByAssigneeId(channelId, assigneeId, q, headerToUser(header));
+    }
+
+    @GetMapping("/productsByAssigneeId")
+    public ResponseEntity<Object> getCountProductsByAssigneeId(@RequestParam int channelId, @RequestParam int assigneeId, HttpServletRequest header){
+        return productService.getCountProductsByAssigneeId(channelId, assigneeId, headerToUser(header));
+    }
 }

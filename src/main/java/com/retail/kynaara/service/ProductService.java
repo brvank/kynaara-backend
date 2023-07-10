@@ -71,12 +71,24 @@ public class ProductService {
     }
     
     //read operations
-    public ResponseEntity<Object> getProducts(int start, int size, User user){
+    public ResponseEntity<Object> getProducts(int start, int size, int channelId, User user){
         if(user == null){
             return appResponse.failureResponse(error.permissionDenied);
         }
         try{
-            return appResponse.successResponse(productCustomRepository.getProducts(start, size), null);
+            return appResponse.successResponse(productCustomRepository.getProducts(start, size, channelId), null);
+        }catch (Exception e){
+            e.printStackTrace();
+            return appResponse.failureResponse(error.unknownErrorOccurred);
+        }
+    }
+
+    public ResponseEntity<Object> getProductsByAssigneeId(int start, int size, int channelId, int assigneeId, User user){
+        if(user == null){
+            return appResponse.failureResponse(error.permissionDenied);
+        }
+        try{
+            return appResponse.successResponse(productCustomRepository.getProductsByAssigneeId(start, size, channelId, assigneeId), null);
         }catch (Exception e){
             e.printStackTrace();
             return appResponse.failureResponse(error.unknownErrorOccurred);
@@ -101,12 +113,24 @@ public class ProductService {
         }
     }
 
-    public ResponseEntity<Object> getProductsByLink(int start, int size, String q, User user){
+    public ResponseEntity<Object> getProductsByLink(int start, int size, int channelId, String q, User user){
         if(user == null){
             return appResponse.failureResponse(error.permissionDenied);
         }
         try{
-            return appResponse.successResponse(productCustomRepository.getProductsByLink(start, size, q), null);
+            return appResponse.successResponse(productCustomRepository.getProductsByLink(start, size, channelId, q), null);
+        }catch (Exception e){
+            e.printStackTrace();
+            return appResponse.failureResponse(error.unknownErrorOccurred);
+        }
+    }
+
+    public ResponseEntity<Object> getProductsByLinkByAssigneeId(int start, int size, int channelId, int assigneeId, String q, User user){
+        if(user == null){
+            return appResponse.failureResponse(error.permissionDenied);
+        }
+        try{
+            return appResponse.successResponse(productCustomRepository.getProductsByLinkByAssigneeId(start, size, channelId, assigneeId, q), null);
         }catch (Exception e){
             e.printStackTrace();
             return appResponse.failureResponse(error.unknownErrorOccurred);
@@ -225,6 +249,30 @@ public class ProductService {
         }
         try{
             return appResponse.successResponse(productCustomRepository.getCountProductsByLink(q), null);
+        }catch (Exception e){
+            e.printStackTrace();
+            return appResponse.failureResponse(error.unknownErrorOccurred);
+        }
+    }
+
+    public ResponseEntity<Object> getCountProductsByLinkByAssigneeId(int channelId, int assigneeId, String q, User user){
+        if(user == null){
+            return appResponse.failureResponse(error.permissionDenied);
+        }
+        try{
+            return appResponse.successResponse(productCustomRepository.getCountProductsByLinkByAssigneeId(channelId, assigneeId, q), null);
+        }catch (Exception e){
+            e.printStackTrace();
+            return appResponse.failureResponse(error.unknownErrorOccurred);
+        }
+    }
+
+    public ResponseEntity<Object> getCountProductsByAssigneeId(int channelId, int assigneeId, User user){
+        if(user == null){
+            return appResponse.failureResponse(error.permissionDenied);
+        }
+        try{
+            return appResponse.successResponse(productCustomRepository.getCountProductsByAssigneeId(channelId, assigneeId), null);
         }catch (Exception e){
             e.printStackTrace();
             return appResponse.failureResponse(error.unknownErrorOccurred);

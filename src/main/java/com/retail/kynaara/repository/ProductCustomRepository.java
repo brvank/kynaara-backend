@@ -31,7 +31,7 @@ public class ProductCustomRepository {
     }
     
     //read operations
-    public List<Product> getProducts(int start, int size){
+    public List<Product> getProducts(int start, int size, int channelId){
         if(start < 0){
             start = 0;
         }
@@ -44,7 +44,34 @@ public class ProductCustomRepository {
 
         Root<Product> productRoot = productCriteriaQuery.from(Product.class);
 
+        Predicate predicateChannelId = criteriaBuilder.equal(productRoot.get("product_channel_id"), channelId);
+
         productCriteriaQuery.select(productRoot);
+
+        productCriteriaQuery.where(predicateChannelId);
+
+        return entityManager.createQuery(productCriteriaQuery).setFirstResult(start).setMaxResults(size).getResultList();
+    }
+
+    public List<Product> getProductsByAssigneeId(int start, int size, int channelId, int assigneeId){
+        if(start < 0){
+            start = 0;
+        }
+        if(size < 0){
+            size = 0;
+        }
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Product> productCriteriaQuery = criteriaBuilder.createQuery(Product.class);
+
+        Root<Product> productRoot = productCriteriaQuery.from(Product.class);
+
+        Predicate predicateChannelId = criteriaBuilder.equal(productRoot.get("product_channel_id"), channelId);
+        Predicate predicateAssigneeId = criteriaBuilder.equal(productRoot.get("product_assignee_id"), assigneeId);
+
+        productCriteriaQuery.select(productRoot);
+
+        productCriteriaQuery.where(predicateChannelId, predicateAssigneeId);
 
         return entityManager.createQuery(productCriteriaQuery).setFirstResult(start).setMaxResults(size).getResultList();
     }
@@ -65,7 +92,7 @@ public class ProductCustomRepository {
         return entityManager.createQuery(productCriteriaQuery).getResultList();
     }
 
-    public List<Product> getProductsByLink(int start, int size, String q){
+    public List<Product> getProductsByLink(int start, int size, int channelId, String q){
         if(start < 0){
             start = 0;
         }
@@ -79,10 +106,35 @@ public class ProductCustomRepository {
         Root<Product> productRoot = productCriteriaQuery.from(Product.class);
 
         Predicate predicateProductLink = criteriaBuilder.like(productRoot.get("product_link"), "%" + q + "%");
+        Predicate predicateChannelId = criteriaBuilder.equal(productRoot.get("product_channel_id"), channelId);
 
         productCriteriaQuery.select(productRoot);
 
-        productCriteriaQuery.where(predicateProductLink);
+        productCriteriaQuery.where(predicateProductLink, predicateChannelId);
+
+        return entityManager.createQuery(productCriteriaQuery).setFirstResult(start).setMaxResults(size).getResultList();
+    }
+
+    public List<Product> getProductsByLinkByAssigneeId(int start, int size, int channelId, int assigneeId, String q){
+        if(start < 0){
+            start = 0;
+        }
+        if(size < 0){
+            size = 0;
+        }
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Product> productCriteriaQuery = criteriaBuilder.createQuery(Product.class);
+
+        Root<Product> productRoot = productCriteriaQuery.from(Product.class);
+
+        Predicate predicateProductLink = criteriaBuilder.like(productRoot.get("product_link"), "%" + q + "%");
+        Predicate predicateChannelId = criteriaBuilder.equal(productRoot.get("product_channel_id"), channelId);
+        Predicate predicateAssigneeId = criteriaBuilder.equal(productRoot.get("product_assignee_id"), assigneeId);
+
+        productCriteriaQuery.select(productRoot);
+
+        productCriteriaQuery.where(predicateProductLink, predicateChannelId, predicateAssigneeId);
 
         return entityManager.createQuery(productCriteriaQuery).setFirstResult(start).setMaxResults(size).getResultList();
     }
@@ -203,6 +255,41 @@ public class ProductCustomRepository {
         productCriteriaQuery.select(criteriaBuilder.count(productRoot));
 
         productCriteriaQuery.where(predicateProductLink);
+
+        return new CountResponse(entityManager.createQuery(productCriteriaQuery).getSingleResult());
+    }
+
+    public CountResponse getCountProductsByLinkByAssigneeId(int channelId, int assigneeId, String q){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Long> productCriteriaQuery = criteriaBuilder.createQuery(Long.class);
+
+        Root<Product> productRoot = productCriteriaQuery.from(Product.class);
+
+        Predicate predicateProductLink = criteriaBuilder.like(productRoot.get("product_link"), "%" + q + "%");
+        Predicate predicateChannelId = criteriaBuilder.equal(productRoot.get("product_channel_id"), channelId);
+        Predicate predicateAssigneeId = criteriaBuilder.equal(productRoot.get("product_assignee_id"), assigneeId);
+
+        productCriteriaQuery.select(criteriaBuilder.count(productRoot));
+
+        productCriteriaQuery.where(predicateProductLink, predicateChannelId, predicateAssigneeId);
+
+        return new CountResponse(entityManager.createQuery(productCriteriaQuery).getSingleResult());
+    }
+
+    public CountResponse getCountProductsByAssigneeId(int channelId, int assigneeId){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Long> productCriteriaQuery = criteriaBuilder.createQuery(Long.class);
+
+        Root<Product> productRoot = productCriteriaQuery.from(Product.class);
+
+        Predicate predicateChannelId = criteriaBuilder.equal(productRoot.get("product_channel_id"), channelId);
+        Predicate predicateAssigneeId = criteriaBuilder.equal(productRoot.get("product_assignee_id"), assigneeId);
+
+        productCriteriaQuery.select(criteriaBuilder.count(productRoot));
+
+        productCriteriaQuery.where(predicateChannelId, predicateAssigneeId);
 
         return new CountResponse(entityManager.createQuery(productCriteriaQuery).getSingleResult());
     }
