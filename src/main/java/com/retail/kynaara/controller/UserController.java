@@ -16,6 +16,11 @@ public class UserController extends ParentController{
     @Autowired
     private UserService userService;
 
+    @GetMapping("/greet")
+    public String greet(@RequestParam String url){
+        return url;
+    }
+
     @PostMapping("/add")
     public ResponseEntity<Object> addUser(@RequestBody Map<String, Object> userMap, HttpServletRequest header){
         return userService.addUser(userMap, headerToUser(header));
@@ -27,7 +32,7 @@ public class UserController extends ParentController{
     }
 
     @GetMapping("/get/{id}")
-    public ResponseEntity<Object> getUsers(@PathVariable(value = "id") int userId, HttpServletRequest header){
+    public ResponseEntity<Object> getUser(@PathVariable(value = "id") int userId, HttpServletRequest header){
         return userService.getUserByUserId(userId, headerToUser(header));
     }
 

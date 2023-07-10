@@ -4,6 +4,7 @@ import com.retail.kynaara.model.Channel;
 import com.retail.kynaara.model.User;
 import com.retail.kynaara.model.UserPermissions;
 import com.retail.kynaara.repository.ChannelCustomRepository;
+import com.retail.kynaara.repository.ProductCustomRepository;
 import com.retail.kynaara.utility.AppMessages;
 import com.retail.kynaara.utility.AppResponse;
 import com.retail.kynaara.utility.AppUtil;
@@ -21,6 +22,9 @@ import java.util.Map;
 public class ChannelService {
     @Autowired
     ChannelCustomRepository channelCustomRepository;
+
+    @Autowired
+    ProductCustomRepository productCustomRepository;
 
     @Autowired
     AppUtil.Constants appUtilConstants;
@@ -161,6 +165,7 @@ public class ChannelService {
             }
 
             channelCustomRepository.deleteChannel(channelId);
+            productCustomRepository.deleteProducts(channelId);
 
             return appResponse.successResponse(success.channelDeleted);
         }catch (Exception e){
@@ -169,4 +174,32 @@ public class ChannelService {
         }
     }
 
+    //count operations
+    public ResponseEntity<Object> getCountChannels(User user){
+        if(user == null){
+            return appResponse.failureResponse(error.permissionDenied);
+        }
+        try{
+
+            return appResponse.successResponse(channelCustomRepository.getCountChannels(), null);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return appResponse.failureResponse(error.unknownErrorOccurred);
+        }
+    }
+
+    public ResponseEntity<Object> getCountChannelsByName(String q, User user){
+        if(user == null){
+            return appResponse.failureResponse(error.permissionDenied);
+        }
+        try{
+
+            return appResponse.successResponse(channelCustomRepository.getCountChannelsByName(q), null);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return appResponse.failureResponse(error.unknownErrorOccurred);
+        }
+    }
 }

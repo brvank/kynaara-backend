@@ -31,9 +31,19 @@ public class ProductController extends ParentController{
         return productService.getProductByProductId(productId, headerToUser(header));
     }
 
+    @GetMapping("/get/byLink")
+    public ResponseEntity<Object> getProductsByLink(@RequestParam int start, @RequestParam int size, @RequestParam String q, HttpServletRequest header){
+        return productService.getProductsByLink(start, size, q, headerToUser(header));
+    }
+
     @PutMapping("/update")
     public ResponseEntity<Object> updateProduct(@RequestBody Map<String, Object> productMap, HttpServletRequest header){
         return productService.updateProduct(productMap, headerToUser(header));
+    }
+
+    @PutMapping("/assign")
+    public ResponseEntity<Object> assignProduct(@RequestBody Map<String, Object> productMap, HttpServletRequest header){
+        return productService.assignProduct(productMap, headerToUser(header));
     }
 
     @DeleteMapping("/delete/{id}")

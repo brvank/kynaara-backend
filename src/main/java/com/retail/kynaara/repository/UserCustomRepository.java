@@ -1,6 +1,8 @@
 package com.retail.kynaara.repository;
 
 import com.retail.kynaara.model.User;
+import com.retail.kynaara.response_model.CountResponse;
+import com.retail.kynaara.response_model.UserResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
@@ -29,7 +31,7 @@ public class UserCustomRepository {
     }
 
     //read operations
-    public List<User> getUsers(int start, int size, int userLevel){
+    public List<UserResponse> getUsers(int start, int size, int userLevel){
         if(start < 0){
             start = 0;
         }
@@ -48,10 +50,10 @@ public class UserCustomRepository {
 
         userCriteriaQuery.where(predicateUserLevel);
 
-        return entityManager.createQuery(userCriteriaQuery).setFirstResult(start).setMaxResults(size).getResultList();
+        return userResponse(entityManager.createQuery(userCriteriaQuery).setFirstResult(start).setMaxResults(size).getResultList());
     }
 
-    public List<User> getUserByUserId(int userId){
+    public List<UserResponse> getUserByUserId(int userId){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<User> userCriteriaQuery = criteriaBuilder.createQuery(User.class);
@@ -64,10 +66,10 @@ public class UserCustomRepository {
 
         userCriteriaQuery.where(predicateUserId);
 
-        return entityManager.createQuery(userCriteriaQuery).getResultList();
+        return userResponse(entityManager.createQuery(userCriteriaQuery).getResultList());
     }
 
-    public List<User> getUsersByFullName(int start, int size, String q, int userLevel){
+    public List<UserResponse> getUsersByFullName(int start, int size, String q, int userLevel){
         if(start < 0){
             start = 0;
         }
@@ -87,10 +89,10 @@ public class UserCustomRepository {
 
         userCriteriaQuery.where(predicateUserFullName, predicateUserLevel);
 
-        return entityManager.createQuery(userCriteriaQuery).setFirstResult(start).setMaxResults(size).getResultList();
+        return userResponse(entityManager.createQuery(userCriteriaQuery).setFirstResult(start).setMaxResults(size).getResultList());
     }
 
-    public List<User> getUsersByUserName(int start, int size, String q, int userLevel){
+    public List<UserResponse> getUsersByUserName(int start, int size, String q, int userLevel){
         if(start < 0){
             start = 0;
         }
@@ -110,7 +112,7 @@ public class UserCustomRepository {
 
         userCriteriaQuery.where(predicateUserFullName, predicateUserLevel);
 
-        return entityManager.createQuery(userCriteriaQuery).setFirstResult(start).setMaxResults(size).getResultList();
+        return userResponse(entityManager.createQuery(userCriteriaQuery).setFirstResult(start).setMaxResults(size).getResultList());
     }
 
     public List<User> getUserByNameAndPassword(String username, String password){
@@ -161,5 +163,65 @@ public class UserCustomRepository {
         criteriaDelete.where(predicateUserId);
 
         entityManager.createQuery(criteriaDelete).executeUpdate();
+    }
+
+    //count operations
+    public CountResponse getCountUsers(int userLevel){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Long> userCriteriaQuery = criteriaBuilder.createQuery(Long.class);
+
+        Root<User> userRoot = userCriteriaQuery.from(User.class);
+
+        Predicate predicateUserLevel = criteriaBuilder.ge(userRoot.get("user_user_level"), userLevel);
+
+        userCriteriaQuery.select(criteriaBuilder.count(userRoot));
+
+        userCriteriaQuery.where(predicateUserLevel);
+
+        return new CountResponse(entityManager.createQuery(userCriteriaQuery).getSingleResult());
+    }
+
+    public CountResponse getCountUsersByFullName(String q, int userLevel){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Long> userCriteriaQuery = criteriaBuilder.createQuery(Long.class);
+
+        Root<User> userRoot = userCriteriaQuery.from(User.class);
+
+        Predicate predicateUserFullName = criteriaBuilder.like(userRoot.get("user_full_name"), "%" + q + "%");
+        Predicate predicateUserLevel = criteriaBuilder.ge(userRoot.get("user_user_level"), userLevel);
+
+        userCriteriaQuery.select(criteriaBuilder.count(userRoot));
+
+        userCriteriaQuery.where(predicateUserFullName, predicateUserLevel);
+
+        return new CountResponse(entityManager.createQuery(userCriteriaQuery).getSingleResult());
+    }
+
+    public CountResponse getCountUsersByUserName(String q, int userLevel){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Long> userCriteriaQuery = criteriaBuilder.createQuery(Long.class);
+
+        Root<User> userRoot = userCriteriaQuery.from(User.class);
+
+        Predicate predicateUserFullName = criteriaBuilder.like(userRoot.get("user_user_name"), "%" + q + "%");
+        Predicate predicateUserLevel = criteriaBuilder.ge(userRoot.get("user_user_level"), userLevel);
+
+        userCriteriaQuery.select(criteriaBuilder.count(userRoot));
+
+        userCriteriaQuery.where(predicateUserFullName, predicateUserLevel);
+
+        return new CountResponse(entityManager.createQuery(userCriteriaQuery).getSingleResult());
+    }
+
+    private List<UserResponse> userResponse(List<User> userList){
+        List<UserResponse> userResponseList = new ArrayList<>();
+        for(User user : userList){
+            userResponseList.add(new UserResponse(user));
+        }
+
+        return userResponseList;
     }
 }

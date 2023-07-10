@@ -1,12 +1,14 @@
 package com.retail.kynaara.repository;
 
 import com.retail.kynaara.model.Product;
+import com.retail.kynaara.response_model.CountResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +65,28 @@ public class ProductCustomRepository {
         return entityManager.createQuery(productCriteriaQuery).getResultList();
     }
 
+    public List<Product> getProductsByLink(int start, int size, String q){
+        if(start < 0){
+            start = 0;
+        }
+        if(size < 0){
+            size = 0;
+        }
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Product> productCriteriaQuery = criteriaBuilder.createQuery(Product.class);
+
+        Root<Product> productRoot = productCriteriaQuery.from(Product.class);
+
+        Predicate predicateProductLink = criteriaBuilder.like(productRoot.get("product_link"), "%" + q + "%");
+
+        productCriteriaQuery.select(productRoot);
+
+        productCriteriaQuery.where(predicateProductLink);
+
+        return entityManager.createQuery(productCriteriaQuery).setFirstResult(start).setMaxResults(size).getResultList();
+    }
+
     //update operations
     @Transactional
     public void updateProduct(Product product){
@@ -76,6 +100,47 @@ public class ProductCustomRepository {
         criteriaUpdate.set("product_image_link", product.getProduct_image_link());
 
         Predicate predicateProductId = criteriaBuilder.equal(productRoot.get("product_id"), product.getProduct_id());
+
+        criteriaUpdate.where(predicateProductId);
+
+        entityManager.createQuery(criteriaUpdate).executeUpdate();
+    }
+
+    @Transactional
+    public void assignProduct(Integer assigneeId, int productId){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaUpdate<Product> criteriaUpdate = criteriaBuilder.createCriteriaUpdate(Product.class);
+
+        Root<Product> productRoot = criteriaUpdate.from(Product.class);
+
+        criteriaUpdate.set("product_assignee_id", assigneeId);
+
+        if(assigneeId == null){
+            criteriaUpdate.set("product_date_assigned", null);
+        }else{
+            criteriaUpdate.set("product_date_assigned", LocalDateTime.now());
+        }
+
+        Predicate predicateProductId = criteriaBuilder.equal(productRoot.get("product_id"), productId);
+
+        criteriaUpdate.where(predicateProductId);
+
+        entityManager.createQuery(criteriaUpdate).executeUpdate();
+    }
+
+    @Transactional
+    public void resetProductsAssignee(Integer assigneeId){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaUpdate<Product> criteriaUpdate = criteriaBuilder.createCriteriaUpdate(Product.class);
+
+        Root<Product> productRoot = criteriaUpdate.from(Product.class);
+
+        criteriaUpdate.set("product_assignee_id", null);
+        criteriaUpdate.set("product_date_assigned", null);
+
+        Predicate predicateProductId = criteriaBuilder.equal(productRoot.get("product_assignee_id"), assigneeId);
 
         criteriaUpdate.where(predicateProductId);
 
@@ -96,5 +161,49 @@ public class ProductCustomRepository {
         criteriaDelete.where(predicateProductId);
 
         entityManager.createQuery(criteriaDelete).executeUpdate();
+    }
+
+    @Transactional
+    public void deleteProducts(int channelId){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaDelete<Product> criteriaDelete = criteriaBuilder.createCriteriaDelete(Product.class);
+
+        Root<Product> productRoot = criteriaDelete.from(Product.class);
+
+        Predicate predicateChannelId = criteriaBuilder.equal(productRoot.get("product_channel_id"), channelId);
+
+        criteriaDelete.where(predicateChannelId);
+
+        entityManager.createQuery(criteriaDelete).executeUpdate();
+    }
+
+    //count operations
+    public CountResponse getCountProducts(){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Long> productCriteriaQuery = criteriaBuilder.createQuery(Long.class);
+
+        Root<Product> productRoot = productCriteriaQuery.from(Product.class);
+
+        productCriteriaQuery.select(criteriaBuilder.count(productRoot));
+
+        return new CountResponse(entityManager.createQuery(productCriteriaQuery).getSingleResult());
+    }
+
+    public CountResponse getCountProductsByLink(String q){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Long> productCriteriaQuery = criteriaBuilder.createQuery(Long.class);
+
+        Root<Product> productRoot = productCriteriaQuery.from(Product.class);
+
+        Predicate predicateProductLink = criteriaBuilder.like(productRoot.get("product_link"), "%" + q + "%");
+
+        productCriteriaQuery.select(criteriaBuilder.count(productRoot));
+
+        productCriteriaQuery.where(predicateProductLink);
+
+        return new CountResponse(entityManager.createQuery(productCriteriaQuery).getSingleResult());
     }
 }

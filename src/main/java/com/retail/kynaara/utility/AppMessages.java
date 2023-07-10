@@ -16,6 +16,7 @@ public class AppMessages {
                 , channelDeleted = "Channel deleted Successfully!"
                 , productAdded = "Product added successfully!"
                 , productUpdated = "Product updated Successfully!"
+                , productAssigned = "Product assigned Successfully!"
                 , productDeleted = "Product deleted Successfully!";
     }
 
@@ -26,6 +27,8 @@ public class AppMessages {
                 , userNotDeleted = "Error deleting User. User not deleted!"
                 , userNameExist = "User name already exists!"
                 , userDoesNotExist = "User doesn't exist!"
+                , userCantBeDeleted = "This user can't be deleted!"
+                , userIsNotSalesPerson = "Product can't be assigned. This user is not a sales person!"
                 , channelNotAdded = "Error saving Channel. Channel not added!"
                 , channelNotUpdated = "Error saving Channel. Channel not updated!"
                 , channelNotDeleted = "Error deleting Channel. Channel not deleted!"
@@ -33,6 +36,7 @@ public class AppMessages {
                 , channelDoesNotExist = "Channel doesn't exist!"
                 , productNotAdded = "Error saving Product. Product not added!"
                 , productNotUpdated = "Error saving Product. Product not updated!"
+                , productNotAssigned = "Error assigning Product. Product not assigned!"
                 , productNotDeleted = "Error deleting Product. Product not deleted!"
                 , productExist = "Product already exists!"
                 , productDoesNotExist = "Product doesn't exist!"

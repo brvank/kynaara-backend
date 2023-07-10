@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class Channel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int channel_id;
 
     @Nullable

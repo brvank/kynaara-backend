@@ -31,7 +31,7 @@ public class ChannelController extends ParentController{
         return channelService.getChannelByChannelId(channelId, headerToUser(header));
     }
 
-    @PostMapping("/get/byChannelName")
+    @GetMapping("/get/byChannelName")
     public ResponseEntity<Object> getChannelsByName(@RequestParam int start, @RequestParam int size, @RequestParam String q, HttpServletRequest header){
         return channelService.getChannelsByName(start, size, q, headerToUser(header));
     }

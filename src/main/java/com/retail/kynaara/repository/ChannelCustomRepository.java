@@ -1,6 +1,7 @@
 package com.retail.kynaara.repository;
 
 import com.retail.kynaara.model.Channel;
+import com.retail.kynaara.response_model.CountResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
@@ -92,10 +93,10 @@ public class ChannelCustomRepository {
         criteriaUpdate.set("channel_name", channel.getChannel_name());
         criteriaUpdate.set("channel_link", channel.getChannel_link());
         criteriaUpdate.set("channel_logo_link", channel.getChannel_logo_link());
-        criteriaUpdate.set("channel_creation_date", channel.getChannel_creation_date());
-        criteriaUpdate.set("channel_creator_id", channel.getChannel_creator_id());
 
         Predicate predicateChannelId = criteriaBuilder.equal(channelRoot.get("channel_id"), channel.getChannel_id());
+
+        criteriaUpdate.where(predicateChannelId);
 
         entityManager.createQuery(criteriaUpdate).executeUpdate();
     }
@@ -114,5 +115,34 @@ public class ChannelCustomRepository {
         criteriaDelete.where(predicateChannelId);
 
         entityManager.createQuery(criteriaDelete).executeUpdate();
+    }
+
+    //count operations
+    public CountResponse getCountChannels(){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Long> channelCriteriaQuery = criteriaBuilder.createQuery(Long.class);
+
+        Root<Channel> channelRoot = channelCriteriaQuery.from(Channel.class);
+
+        channelCriteriaQuery.select(criteriaBuilder.count(channelRoot));
+
+        return new CountResponse(entityManager.createQuery(channelCriteriaQuery).getSingleResult());
+    }
+
+    public CountResponse getCountChannelsByName(String q){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Long> channelCriteriaQuery = criteriaBuilder.createQuery(Long.class);
+
+        Root<Channel> channelRoot = channelCriteriaQuery.from(Channel.class);
+
+        Predicate predicateChannelName = criteriaBuilder.like(channelRoot.get("channel_name"), "%" + q + "%");
+
+        channelCriteriaQuery.select(criteriaBuilder.count(channelRoot));
+
+        channelCriteriaQuery.where(predicateChannelName);
+
+        return new CountResponse(entityManager.createQuery(channelCriteriaQuery).getSingleResult());
     }
 }

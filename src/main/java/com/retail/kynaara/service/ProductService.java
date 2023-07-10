@@ -4,20 +4,27 @@ import com.retail.kynaara.model.Product;
 import com.retail.kynaara.model.User;
 import com.retail.kynaara.model.UserPermissions;
 import com.retail.kynaara.repository.ProductCustomRepository;
+import com.retail.kynaara.repository.UserCustomRepository;
+import com.retail.kynaara.response_model.UserResponse;
 import com.retail.kynaara.utility.AppMessages;
 import com.retail.kynaara.utility.AppResponse;
 import com.retail.kynaara.utility.AppUtil;
 import com.retail.kynaara.utility.UserPermissionsManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class ProductService {
     @Autowired
     ProductCustomRepository productCustomRepository;
+
+    @Autowired
+    UserCustomRepository userCustomRepository;
 
     @Autowired
     AppUtil.Constants appUtilConstants;
@@ -50,6 +57,7 @@ public class ProductService {
 
             product.setProduct_link((String) productMap.get(appUtilConstants.PRODUCT_LINK));
             product.setProduct_image_link((String) productMap.get(appUtilConstants.PRODUCT_IMAGE_LINK));
+            product.setProduct_channel_id((int) productMap.get(appUtilConstants.PRODUCT_CHANNEL_ID));
             product.setProduct_date_created(LocalDateTime.now());
             product.setProduct_creator_id(user.getUser_id());
 
@@ -93,6 +101,18 @@ public class ProductService {
         }
     }
 
+    public ResponseEntity<Object> getProductsByLink(int start, int size, String q, User user){
+        if(user == null){
+            return appResponse.failureResponse(error.permissionDenied);
+        }
+        try{
+            return appResponse.successResponse(productCustomRepository.getProductsByLink(start, size, q), null);
+        }catch (Exception e){
+            e.printStackTrace();
+            return appResponse.failureResponse(error.unknownErrorOccurred);
+        }
+    }
+
     //update operations
     public ResponseEntity<Object> updateProduct(Map<String, Object> productMap, User user){
         if(user == null){
@@ -124,6 +144,45 @@ public class ProductService {
         }
     }
 
+    public ResponseEntity<Object> assignProduct(Map<String, Object> productMap, User user){
+        if(user == null){
+            return appResponse.failureResponse(error.permissionDenied);
+        }
+        try{
+            UserPermissions userPermissions = userPermissionsManager.getUserPermissions(user.getUser_user_level());
+            if(!userPermissions.isAlterProduct()){
+                return appResponse.failureResponse(error.permissionDenied);
+            }
+
+            Integer assigneeId = (int) productMap.get(appUtilConstants.PRODUCT_ASSIGNEE_ID);
+            int productId = (int) productMap.get(appUtilConstants.PRODUCT_ID);
+
+            List<Product> productList = productCustomRepository.getProductByProductId(productId);
+            if(productList.isEmpty()){
+                return appResponse.failureResponse(error.productDoesNotExist);
+            }
+
+            if(assigneeId != null){
+                List<UserResponse> userList = userCustomRepository.getUserByUserId(assigneeId);
+
+                if(userList.isEmpty()){
+                    appResponse.failureResponse(error.userDoesNotExist);
+                }
+
+                if(userList.get(0).getUser_user_level() <= 2){
+                    appResponse.failureResponse(error.userIsNotSalesPerson);
+                }
+            }
+
+            productCustomRepository.assignProduct(assigneeId, productId);
+
+            return appResponse.successResponse(success.productAssigned);
+        }catch (Exception e){
+            e.printStackTrace();
+            return appResponse.failureResponse(error.productNotAssigned);
+        }
+    }
+
     //delete operations
     public ResponseEntity<Object> deleteProduct(int productId, User user){
         if(user == null){
@@ -146,6 +205,31 @@ public class ProductService {
         }catch (Exception e){
             e.printStackTrace();
             return appResponse.failureResponse(error.productNotDeleted);
+        }
+    }
+
+    //count operations
+    public ResponseEntity<Object> getCountProducts(User user){
+        if(user == null){
+            return appResponse.failureResponse(error.permissionDenied);
+        }
+        try{
+            return appResponse.successResponse(productCustomRepository.getCountProducts(), null);
+        }catch (Exception e){
+            e.printStackTrace();
+            return appResponse.failureResponse(error.unknownErrorOccurred);
+        }
+    }
+
+    public ResponseEntity<Object> getCountProductsByLink(String q, User user){
+        if(user == null){
+            return appResponse.failureResponse(error.permissionDenied);
+        }
+        try{
+            return appResponse.successResponse(productCustomRepository.getCountProductsByLink(q), null);
+        }catch (Exception e){
+            e.printStackTrace();
+            return appResponse.failureResponse(error.unknownErrorOccurred);
         }
     }
 }

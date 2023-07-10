@@ -25,6 +25,7 @@ public class AppUtil {
                 , PRODUCT_CREATOR_ID = "creator_id"
                 , PRODUCT_ASSIGNED_DATE = "assigned_date"
                 , PRODUCT_ASSIGNEE_ID = "assignee_id"
+                , PRODUCT_CHANNEL_ID = "channel_id"
                 , PRODUCT_ID = "product_id";
 
         public final String SUCCESS = "success"
