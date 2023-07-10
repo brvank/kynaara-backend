@@ -162,16 +162,14 @@ public class ProductService {
                 return appResponse.failureResponse(error.productDoesNotExist);
             }
 
-            if(assigneeId != null){
-                List<UserResponse> userList = userCustomRepository.getUserByUserId(assigneeId);
+            List<UserResponse> userList = userCustomRepository.getUserByUserId(assigneeId);
 
-                if(userList.isEmpty()){
-                    appResponse.failureResponse(error.userDoesNotExist);
-                }
+            if(userList.isEmpty()){
+                return appResponse.failureResponse(error.userDoesNotExist);
+            }
 
-                if(userList.get(0).getUser_user_level() <= 2){
-                    appResponse.failureResponse(error.userIsNotSalesPerson);
-                }
+            if(userList.get(0).getUser_user_level() <= 2){
+                return appResponse.failureResponse(error.userIsNotSalesPerson);
             }
 
             productCustomRepository.assignProduct(assigneeId, productId);
