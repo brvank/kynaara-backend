@@ -231,7 +231,7 @@ public class ProductCustomRepository {
     }
 
     //count operations
-    public CountResponse getCountProducts(){
+    public Long getCountProducts(){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Long> productCriteriaQuery = criteriaBuilder.createQuery(Long.class);
@@ -240,10 +240,10 @@ public class ProductCustomRepository {
 
         productCriteriaQuery.select(criteriaBuilder.count(productRoot));
 
-        return new CountResponse(entityManager.createQuery(productCriteriaQuery).getSingleResult());
+        return entityManager.createQuery(productCriteriaQuery).getSingleResult();
     }
 
-    public CountResponse getCountProductsByLink(String q){
+    public Long getCountProductsByLink(String q){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Long> productCriteriaQuery = criteriaBuilder.createQuery(Long.class);
@@ -256,10 +256,10 @@ public class ProductCustomRepository {
 
         productCriteriaQuery.where(predicateProductLink);
 
-        return new CountResponse(entityManager.createQuery(productCriteriaQuery).getSingleResult());
+        return entityManager.createQuery(productCriteriaQuery).getSingleResult();
     }
 
-    public CountResponse getCountProductsByLinkByAssigneeId(int channelId, int assigneeId, String q){
+    public Long getCountProductsByLinkByAssigneeId(int channelId, int assigneeId, String q){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Long> productCriteriaQuery = criteriaBuilder.createQuery(Long.class);
@@ -274,10 +274,10 @@ public class ProductCustomRepository {
 
         productCriteriaQuery.where(predicateProductLink, predicateChannelId, predicateAssigneeId);
 
-        return new CountResponse(entityManager.createQuery(productCriteriaQuery).getSingleResult());
+        return entityManager.createQuery(productCriteriaQuery).getSingleResult();
     }
 
-    public CountResponse getCountProductsByAssigneeId(int channelId, int assigneeId){
+    public Long getCountProductsByAssigneeId(int channelId, int assigneeId){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Long> productCriteriaQuery = criteriaBuilder.createQuery(Long.class);
@@ -291,6 +291,6 @@ public class ProductCustomRepository {
 
         productCriteriaQuery.where(predicateChannelId, predicateAssigneeId);
 
-        return new CountResponse(entityManager.createQuery(productCriteriaQuery).getSingleResult());
+        return entityManager.createQuery(productCriteriaQuery).getSingleResult();
     }
 }

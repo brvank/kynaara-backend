@@ -25,7 +25,7 @@ public class ChannelCustomRepository {
     }
 
     //read operations
-    public List<Channel> getChannels(int start, int size){
+    public CountResponse getChannels(int start, int size){
         if(start < 0){
             start = 0;
         }
@@ -40,7 +40,7 @@ public class ChannelCustomRepository {
 
         channelCriteriaQuery.select(channelRoot);
 
-        return entityManager.createQuery(channelCriteriaQuery).setFirstResult(start).setMaxResults(size).getResultList();
+        return new CountResponse(getCountChannels(), entityManager.createQuery(channelCriteriaQuery).setFirstResult(start).setMaxResults(size).getResultList());
     }
 
     public List<Channel> getChannelByChannelId(int channelId){
@@ -118,7 +118,7 @@ public class ChannelCustomRepository {
     }
 
     //count operations
-    public CountResponse getCountChannels(){
+    public Long getCountChannels(){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Long> channelCriteriaQuery = criteriaBuilder.createQuery(Long.class);
@@ -127,10 +127,10 @@ public class ChannelCustomRepository {
 
         channelCriteriaQuery.select(criteriaBuilder.count(channelRoot));
 
-        return new CountResponse(entityManager.createQuery(channelCriteriaQuery).getSingleResult());
+        return entityManager.createQuery(channelCriteriaQuery).getSingleResult();
     }
 
-    public CountResponse getCountChannelsByName(String q){
+    public Long getCountChannelsByName(String q){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Long> channelCriteriaQuery = criteriaBuilder.createQuery(Long.class);
@@ -143,6 +143,6 @@ public class ChannelCustomRepository {
 
         channelCriteriaQuery.where(predicateChannelName);
 
-        return new CountResponse(entityManager.createQuery(channelCriteriaQuery).getSingleResult());
+        return entityManager.createQuery(channelCriteriaQuery).getSingleResult();
     }
 }

@@ -104,6 +104,24 @@ public class UserService {
         }
     }
 
+    public ResponseEntity<Object> getUserByUserId(User user){
+        if(user == null){
+            return appResponse.failureResponse(error.permissionDenied);
+        }
+        try{
+            List<UserResponse> userList = userCustomRepository.getUserByUserId(user.getUser_id());
+            if(userList.isEmpty()){
+                return appResponse.failureResponse(error.userDoesNotExist);
+            }else{
+                return appResponse.successResponse(userList.get(0), null);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return appResponse.failureResponse(error.unknownErrorOccurred);
+        }
+    }
+
     public ResponseEntity<Object> getUsersByFullName(int start, int size, String q, User user){
         if(user == null){
             return appResponse.failureResponse(error.permissionDenied);

@@ -166,7 +166,7 @@ public class UserCustomRepository {
     }
 
     //count operations
-    public CountResponse getCountUsers(int userLevel){
+    public Long getCountUsers(int userLevel){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Long> userCriteriaQuery = criteriaBuilder.createQuery(Long.class);
@@ -179,10 +179,10 @@ public class UserCustomRepository {
 
         userCriteriaQuery.where(predicateUserLevel);
 
-        return new CountResponse(entityManager.createQuery(userCriteriaQuery).getSingleResult());
+        return entityManager.createQuery(userCriteriaQuery).getSingleResult();
     }
 
-    public CountResponse getCountUsersByFullName(String q, int userLevel){
+    public Long getCountUsersByFullName(String q, int userLevel){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Long> userCriteriaQuery = criteriaBuilder.createQuery(Long.class);
@@ -196,10 +196,10 @@ public class UserCustomRepository {
 
         userCriteriaQuery.where(predicateUserFullName, predicateUserLevel);
 
-        return new CountResponse(entityManager.createQuery(userCriteriaQuery).getSingleResult());
+        return entityManager.createQuery(userCriteriaQuery).getSingleResult();
     }
 
-    public CountResponse getCountUsersByUserName(String q, int userLevel){
+    public Long getCountUsersByUserName(String q, int userLevel){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Long> userCriteriaQuery = criteriaBuilder.createQuery(Long.class);
@@ -213,7 +213,7 @@ public class UserCustomRepository {
 
         userCriteriaQuery.where(predicateUserFullName, predicateUserLevel);
 
-        return new CountResponse(entityManager.createQuery(userCriteriaQuery).getSingleResult());
+        return entityManager.createQuery(userCriteriaQuery).getSingleResult();
     }
 
     private List<UserResponse> userResponse(List<User> userList){
