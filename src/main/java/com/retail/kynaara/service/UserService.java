@@ -3,6 +3,7 @@ package com.retail.kynaara.service;
 import com.retail.kynaara.model.User;
 import com.retail.kynaara.repository.ProductCustomRepository;
 import com.retail.kynaara.repository.UserCustomRepository;
+import com.retail.kynaara.response_model.CountResponse;
 import com.retail.kynaara.response_model.UserResponse;
 import com.retail.kynaara.utility.AppMessages;
 import com.retail.kynaara.utility.AppResponse;
@@ -74,30 +75,12 @@ public class UserService {
     }
 
     //get operations
-    public ResponseEntity<Object> getUsers(int start, int size, User user){
+    public ResponseEntity<Object> getUsers(int start, int size, String fullName, String userName, User user){
         if(user == null){
             return appResponse.failureResponse(error.permissionDenied);
         }
         try{
-            return appResponse.successResponse(userCustomRepository.getUsers(start, size, user.getUser_user_level()), null);
-        }catch (Exception e){
-            e.printStackTrace();
-            return appResponse.failureResponse(error.unknownErrorOccurred);
-        }
-    }
-
-    public ResponseEntity<Object> getUserByUserId(int userId, User user){
-        if(user == null){
-            return appResponse.failureResponse(error.permissionDenied);
-        }
-        try{
-            List<UserResponse> userList = userCustomRepository.getUserByUserId(userId);
-            if(userList.isEmpty()){
-                return appResponse.failureResponse(error.userDoesNotExist);
-            }else{
-                return appResponse.successResponse(userList.get(0), null);
-            }
-
+            return appResponse.successResponse(new CountResponse(userCustomRepository.getCountUsers(user.getUser_user_level(), fullName, userName), userCustomRepository.getUsers(start, size, user.getUser_user_level(), fullName, userName)), null);
         }catch (Exception e){
             e.printStackTrace();
             return appResponse.failureResponse(error.unknownErrorOccurred);
@@ -116,30 +99,6 @@ public class UserService {
                 return appResponse.successResponse(userList.get(0), null);
             }
 
-        }catch (Exception e){
-            e.printStackTrace();
-            return appResponse.failureResponse(error.unknownErrorOccurred);
-        }
-    }
-
-    public ResponseEntity<Object> getUsersByFullName(int start, int size, String q, User user){
-        if(user == null){
-            return appResponse.failureResponse(error.permissionDenied);
-        }
-        try{
-            return appResponse.successResponse(userCustomRepository.getUsersByFullName(start, size, q, user.getUser_user_level()), null);
-        }catch (Exception e){
-            e.printStackTrace();
-            return appResponse.failureResponse(error.unknownErrorOccurred);
-        }
-    }
-
-    public ResponseEntity<Object> getUsersByUserName(int start, int size, String q, User user){
-        if(user == null){
-            return appResponse.failureResponse(error.permissionDenied);
-        }
-        try{
-            return appResponse.successResponse(userCustomRepository.getUsersByUserName(start, size, q, user.getUser_user_level()), null);
         }catch (Exception e){
             e.printStackTrace();
             return appResponse.failureResponse(error.unknownErrorOccurred);
@@ -201,43 +160,6 @@ public class UserService {
         }catch (Exception e){
             e.printStackTrace();
             return appResponse.failureResponse(error.userNotDeleted);
-        }
-    }
-
-    //count operations
-    public ResponseEntity<Object> getCountUsers(User user){
-        if(user == null){
-            return appResponse.failureResponse(error.permissionDenied);
-        }
-        try{
-            return appResponse.successResponse(userCustomRepository.getCountUsers(user.getUser_user_level()), null);
-        }catch (Exception e){
-            e.printStackTrace();
-            return appResponse.failureResponse(error.unknownErrorOccurred);
-        }
-    }
-
-    public ResponseEntity<Object> getCountUsersByFullName(String q, User user){
-        if(user == null){
-            return appResponse.failureResponse(error.permissionDenied);
-        }
-        try{
-            return appResponse.successResponse(userCustomRepository.getCountUsersByFullName(q, user.getUser_user_level()), null);
-        }catch (Exception e){
-            e.printStackTrace();
-            return appResponse.failureResponse(error.unknownErrorOccurred);
-        }
-    }
-
-    public ResponseEntity<Object> getCountUsersByUserName(String q, User user){
-        if(user == null){
-            return appResponse.failureResponse(error.permissionDenied);
-        }
-        try{
-            return appResponse.successResponse(userCustomRepository.getCountUsersByUserName(q, user.getUser_user_level()), null);
-        }catch (Exception e){
-            e.printStackTrace();
-            return appResponse.failureResponse(error.unknownErrorOccurred);
         }
     }
 }

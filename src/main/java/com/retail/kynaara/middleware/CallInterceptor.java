@@ -25,6 +25,8 @@ public class CallInterceptor implements HandlerInterceptor {
         if(request.getRequestURI().contains("api/v1/auth/login") || request.getRequestURI().contains("error")){
             return true;
         }else{
+            System.out.println("request header");
+            System.out.println(request.getHeader("Authorization"));
             TokenUtil.TokenValidity tokenValidity = tokenUtil.validateToken(request.getHeader("Authorization"));
 
             if(tokenValidity == TokenUtil.TokenValidity.VALID){

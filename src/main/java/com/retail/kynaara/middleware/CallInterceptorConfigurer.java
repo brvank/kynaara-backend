@@ -20,6 +20,6 @@ public class CallInterceptorConfigurer implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**");
+        registry.addMapping("/api/v1/**").allowedOrigins("*").allowedHeaders("*").allowedMethods("*");
     }
 }

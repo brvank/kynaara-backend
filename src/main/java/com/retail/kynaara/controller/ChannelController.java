@@ -22,18 +22,13 @@ public class ChannelController extends ParentController{
     }
 
     @GetMapping("/get")
-    public ResponseEntity<Object> getChannels(@RequestParam int start, @RequestParam int size, HttpServletRequest header){
-        return channelService.getChannels(start, size, headerToUser(header));
+    public ResponseEntity<Object> getChannelsByName(@RequestParam int start, @RequestParam int size, @RequestParam(required = false) String q, HttpServletRequest header){
+        return channelService.getChannels(start, size, q, headerToUser(header));
     }
 
     @GetMapping("/get/{id}")
     public ResponseEntity<Object> getChannelByChannelId(@PathVariable(value = "id") int channelId, HttpServletRequest header){
         return channelService.getChannelByChannelId(channelId, headerToUser(header));
-    }
-
-    @GetMapping("/get/byChannelName")
-    public ResponseEntity<Object> getChannelsByName(@RequestParam int start, @RequestParam int size, @RequestParam String q, HttpServletRequest header){
-        return channelService.getChannelsByName(start, size, q, headerToUser(header));
     }
 
     @PutMapping("/update")

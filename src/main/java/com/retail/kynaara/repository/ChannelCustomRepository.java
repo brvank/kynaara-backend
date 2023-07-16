@@ -25,7 +25,7 @@ public class ChannelCustomRepository {
     }
 
     //read operations
-    public CountResponse getChannels(int start, int size){
+    public List<Channel> getChannels(int start, int size, String q){
         if(start < 0){
             start = 0;
         }
@@ -38,9 +38,17 @@ public class ChannelCustomRepository {
 
         Root<Channel> channelRoot = channelCriteriaQuery.from(Channel.class);
 
+        Predicate predicate = criteriaBuilder.conjunction();
+
+        if(q != null){
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(channelRoot.get("channel_name"), "%" + q + "%"));
+        }
+
         channelCriteriaQuery.select(channelRoot);
 
-        return new CountResponse(getCountChannels(), entityManager.createQuery(channelCriteriaQuery).setFirstResult(start).setMaxResults(size).getResultList());
+        channelCriteriaQuery.where(predicate);
+
+        return entityManager.createQuery(channelCriteriaQuery).setFirstResult(start).setMaxResults(size).getResultList();
     }
 
     public List<Channel> getChannelByChannelId(int channelId){
@@ -57,28 +65,6 @@ public class ChannelCustomRepository {
         channelCriteriaQuery.where(predicateChannelId);
 
         return entityManager.createQuery(channelCriteriaQuery).getResultList();
-    }
-
-    public List<Channel> getChannelsByName(int start, int size, String q){
-        if(start < 0){
-            start = 0;
-        }
-        if(size < 0){
-            size = 0;
-        }
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-
-        CriteriaQuery<Channel> channelCriteriaQuery = criteriaBuilder.createQuery(Channel.class);
-
-        Root<Channel> channelRoot = channelCriteriaQuery.from(Channel.class);
-
-        Predicate predicateChannelName = criteriaBuilder.like(channelRoot.get("channel_name"), "%" + q + "%");
-
-        channelCriteriaQuery.select(channelRoot);
-
-        channelCriteriaQuery.where(predicateChannelName);
-
-        return entityManager.createQuery(channelCriteriaQuery).setFirstResult(start).setMaxResults(size).getResultList();
     }
 
     //update operations
@@ -118,30 +104,22 @@ public class ChannelCustomRepository {
     }
 
     //count operations
-    public Long getCountChannels(){
+    public Long getCountChannels(String q){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Long> channelCriteriaQuery = criteriaBuilder.createQuery(Long.class);
 
         Root<Channel> channelRoot = channelCriteriaQuery.from(Channel.class);
 
-        channelCriteriaQuery.select(criteriaBuilder.count(channelRoot));
+        Predicate predicate = criteriaBuilder.conjunction();
 
-        return entityManager.createQuery(channelCriteriaQuery).getSingleResult();
-    }
-
-    public Long getCountChannelsByName(String q){
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-
-        CriteriaQuery<Long> channelCriteriaQuery = criteriaBuilder.createQuery(Long.class);
-
-        Root<Channel> channelRoot = channelCriteriaQuery.from(Channel.class);
-
-        Predicate predicateChannelName = criteriaBuilder.like(channelRoot.get("channel_name"), "%" + q + "%");
+        if(q != null){
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(channelRoot.get("channel_name"), "%" + q + "%"));
+        }
 
         channelCriteriaQuery.select(criteriaBuilder.count(channelRoot));
 
-        channelCriteriaQuery.where(predicateChannelName);
+        channelCriteriaQuery.where(predicate);
 
         return entityManager.createQuery(channelCriteriaQuery).getSingleResult();
     }

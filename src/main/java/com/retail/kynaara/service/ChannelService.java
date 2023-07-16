@@ -5,6 +5,7 @@ import com.retail.kynaara.model.User;
 import com.retail.kynaara.model.UserPermissions;
 import com.retail.kynaara.repository.ChannelCustomRepository;
 import com.retail.kynaara.repository.ProductCustomRepository;
+import com.retail.kynaara.response_model.CountResponse;
 import com.retail.kynaara.utility.AppMessages;
 import com.retail.kynaara.utility.AppResponse;
 import com.retail.kynaara.utility.AppUtil;
@@ -70,13 +71,18 @@ public class ChannelService {
     }
 
     //read operations
-    public ResponseEntity<Object> getChannels(int start, int size, User user){
+
+    public ResponseEntity<Object> getChannels(int start, int size, String q, User user){
         if(user == null){
             return appResponse.failureResponse(error.permissionDenied);
         }
         try{
 
-            return appResponse.successResponse(channelCustomRepository.getChannels(start, size), null);
+            return appResponse.successResponse(
+                    new CountResponse(
+                            channelCustomRepository.getCountChannels(q),
+                            channelCustomRepository.getChannels(start, size, q)
+                    ), null);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -95,20 +101,6 @@ public class ChannelService {
             }else{
                 return appResponse.successResponse(channelList.get(0), null);
             }
-
-        }catch (Exception e){
-            e.printStackTrace();
-            return appResponse.failureResponse(error.unknownErrorOccurred);
-        }
-    }
-
-    public ResponseEntity<Object> getChannelsByName(int start, int size, String q, User user){
-        if(user == null){
-            return appResponse.failureResponse(error.permissionDenied);
-        }
-        try{
-
-            return appResponse.successResponse(channelCustomRepository.getChannelsByName(start, size, q), null);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -171,35 +163,6 @@ public class ChannelService {
         }catch (Exception e){
             e.printStackTrace();
             return appResponse.failureResponse(error.channelNotDeleted);
-        }
-    }
-
-    //count operations
-    public ResponseEntity<Object> getCountChannels(User user){
-        if(user == null){
-            return appResponse.failureResponse(error.permissionDenied);
-        }
-        try{
-
-            return appResponse.successResponse(channelCustomRepository.getCountChannels(), null);
-
-        }catch (Exception e){
-            e.printStackTrace();
-            return appResponse.failureResponse(error.unknownErrorOccurred);
-        }
-    }
-
-    public ResponseEntity<Object> getCountChannelsByName(String q, User user){
-        if(user == null){
-            return appResponse.failureResponse(error.permissionDenied);
-        }
-        try{
-
-            return appResponse.successResponse(channelCustomRepository.getCountChannelsByName(q), null);
-
-        }catch (Exception e){
-            e.printStackTrace();
-            return appResponse.failureResponse(error.unknownErrorOccurred);
         }
     }
 }
