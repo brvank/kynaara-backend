@@ -115,7 +115,6 @@ public class UserService {
 
             userToUpdate.setUser_id((int) userMap.get(appUtilConstants.USER_ID));
             userToUpdate.setUser_email((String) userMap.get(appUtilConstants.USER_EMAIL));
-            userToUpdate.setUser_password((String) userMap.get(appUtilConstants.USER_PASSWORD));
             userToUpdate.setUser_full_name((String) userMap.get(appUtilConstants.USER_FULL_NAME));
 
             List<UserResponse> userList = userCustomRepository.getUserByUserId(userToUpdate.getUser_id());

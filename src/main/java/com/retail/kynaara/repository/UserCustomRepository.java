@@ -104,7 +104,6 @@ public class UserCustomRepository {
 
         criteriaUpdate.set("user_full_name", user.getUser_full_name());
         criteriaUpdate.set("user_email", user.getUser_email());
-        criteriaUpdate.set("user_password", user.getUser_password());
 
         Predicate predicateUserId = criteriaBuilder.equal(userRoot.get("user_id"), user.getUser_id());
 
