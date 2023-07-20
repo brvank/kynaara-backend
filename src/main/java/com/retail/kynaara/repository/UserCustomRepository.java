@@ -31,7 +31,7 @@ public class UserCustomRepository {
     }
 
     //read operations
-    public List<UserResponse> getUsers(int start, int size, int userLevel, String fullName, String userName){
+    public List<UserResponse> getUsers(int start, int size, int userLevel, String fullName, String userName, Integer queryUserLevel){
         if(start < 0){
             start = 0;
         }
@@ -54,6 +54,10 @@ public class UserCustomRepository {
 
         if(userName != null){
             predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(userRoot.get("user_user_name"), "%" + userName + "%"));
+        }
+
+        if(queryUserLevel != null){
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(userRoot.get("user_user_level"), queryUserLevel));
         }
 
         userCriteriaQuery.select(userRoot);
@@ -129,7 +133,7 @@ public class UserCustomRepository {
     }
 
     //count operations
-    public Long getCountUsers(int userLevel, String fullName, String userName){
+    public Long getCountUsers(int userLevel, String fullName, String userName, Integer queryUserLevel){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Long> userCriteriaQuery = criteriaBuilder.createQuery(Long.class);
@@ -146,6 +150,10 @@ public class UserCustomRepository {
 
         if(userName != null){
             predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(userRoot.get("user_user_name"), "%" + userName + "%"));
+        }
+
+        if(queryUserLevel != null){
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(userRoot.get("user_user_level"), queryUserLevel));
         }
 
         userCriteriaQuery.select(criteriaBuilder.count(userRoot));

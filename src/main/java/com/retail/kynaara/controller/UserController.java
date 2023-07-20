@@ -22,8 +22,8 @@ public class UserController extends ParentController{
     }
 
     @GetMapping("/get")
-    public ResponseEntity<Object> getUsers(@RequestParam int start, @RequestParam int size, @RequestParam(required = false) String fullName, @RequestParam(required = false) String userName, HttpServletRequest header){
-        return userService.getUsers(start, size, fullName, userName, headerToUser(header));
+    public ResponseEntity<Object> getUsers(@RequestParam int start, @RequestParam int size, @RequestParam(required = false) String fullName, @RequestParam(required = false) String userName, @RequestParam(required = false) Integer userLevel, HttpServletRequest header){
+        return userService.getUsers(start, size, fullName, userName, userLevel, headerToUser(header));
     }
 
     //for logged in user

@@ -75,12 +75,12 @@ public class UserService {
     }
 
     //get operations
-    public ResponseEntity<Object> getUsers(int start, int size, String fullName, String userName, User user){
+    public ResponseEntity<Object> getUsers(int start, int size, String fullName, String userName, Integer queryUserLevel, User user){
         if(user == null){
             return appResponse.failureResponse(error.permissionDenied);
         }
         try{
-            return appResponse.successResponse(new CountResponse(userCustomRepository.getCountUsers(user.getUser_user_level(), fullName, userName), userCustomRepository.getUsers(start, size, user.getUser_user_level(), fullName, userName)), null);
+            return appResponse.successResponse(new CountResponse(userCustomRepository.getCountUsers(user.getUser_user_level(), fullName, userName, queryUserLevel), userCustomRepository.getUsers(start, size, user.getUser_user_level(), fullName, userName, queryUserLevel)), null);
         }catch (Exception e){
             e.printStackTrace();
             return appResponse.failureResponse(error.unknownErrorOccurred);
