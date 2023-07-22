@@ -25,6 +25,13 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.json/json
 	implementation 'org.json:json:20230227'
 
+	// https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-jasper
+	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper:10.1.11'
+
+	// https://mvnrepository.com/artifact/javax.servlet.jsp.jstl/jstl-api
+	implementation 'javax.servlet.jsp.jstl:jstl-api:1.2'
+
+
 }
 
 tasks.named('test') {
