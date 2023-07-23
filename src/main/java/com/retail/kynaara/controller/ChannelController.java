@@ -22,7 +22,7 @@ public class ChannelController extends ParentController{
     }
 
     @GetMapping("/get")
-    public ResponseEntity<Object> getChannelsByName(@RequestParam int start, @RequestParam int size, @RequestParam(required = false) String q, HttpServletRequest header){
+    public ResponseEntity<Object> getChannels(@RequestParam int start, @RequestParam int size, @RequestParam(required = false) String q, HttpServletRequest header){
         return channelService.getChannels(start, size, q, headerToUser(header));
     }
 
